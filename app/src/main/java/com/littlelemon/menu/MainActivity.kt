@@ -1,5 +1,6 @@
 package com.littlelemon.menu
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -15,7 +16,6 @@ import kotlinx.coroutines.flow.update
 
 class MainActivity : ComponentActivity() {
 
-
     private val productsState: MutableStateFlow<Products> =
         MutableStateFlow(Products(productsList))
 
@@ -27,11 +27,17 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun InitUI() {
         val products by productsState.collectAsState()
-        ProductsGrid(products = products)
+        ProductsGrid(products = products,this::startProductActivity)
     }
 
     private fun startProductActivity(productItem: ProductItem) {
         //TODO instantiate intent and pass extra parameter from product
+        val intent = Intent(this,ProductActivity::class.java)
+        intent.putExtra(KEY_TITLE, productItem.title)
+        intent.putExtra(KEY_PRICE, productItem.price)
+        intent.putExtra(KEY_CATEGORY, productItem.category)
+        intent.putExtra(KEY_IMAGE, productItem.image)
+        startActivity(intent)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -74,5 +80,12 @@ class MainActivity : ComponentActivity() {
             }
         }
         return true
+    }
+
+    companion object {
+        const val KEY_TITLE = "title"
+        const val KEY_PRICE = "price"
+        const val KEY_IMAGE = "image"
+        const val KEY_CATEGORY = "category"
     }
 }
